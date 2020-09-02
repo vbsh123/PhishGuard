@@ -127,7 +127,7 @@ def check_iframe(sus_domain):
     data = res.text
     soup = BeautifulSoup(data, 'html.parser')
     print(soup.find('iframe'))
-
+    print()
 
 def ssl_duration_check(sus_domain):
     if sus_domain.ssl == 1:     
