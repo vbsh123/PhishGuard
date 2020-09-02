@@ -122,8 +122,6 @@ def check_rank(sus_domain):
 
 def check_malicious_content(sus_domain):
     malicious_flag = False
-    print(sus_domain.redirection)
-    print(sus_domain.redirected_url)
     if sus_domain.redirection == 1:
         url = sus_domain.redirected_url
         if "mailto:" in url:
@@ -135,8 +133,8 @@ def check_malicious_content(sus_domain):
     data = res.text
     soup = BeautifulSoup(data, 'html.parser')
     iframes = soup.findAll('iframe')
-    print(url)
-    print(res.text)
+  #  print(url)
+  #  print(res.text)
     for iframe in iframes:
         if 'frameBorder=\"0\"' in iframes:
             sus_domain.iframe = 1
@@ -220,7 +218,7 @@ def run_on_suffix(domain_name, suffix):
 
 
 #run_on_suffix("paypal","com")
-dom = domain(0,"google.com","http://paypalk.com/")
+dom = domain(0,"google.com","http://peypal.com/")
 check_redirecetion(dom)
 check_malicious_content(dom)
 #res = requests.get("http://ww1.paypalk.com/")
