@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import xmltodict
+import time
 
 existing_domains = []
 original_url = str(sys.argv[1])
@@ -29,6 +30,8 @@ class domain:
         self.https_token=0
         self.dash_token=0
         self.iframe=0
+        self.mail=0
+        self.too_many_requests=0
 
 
  
@@ -59,20 +62,19 @@ def check_ssl_and_exist(domain_name, suffix):
 
 
 def check_redirecetion(sus_domain):
-    res = requests.get(sus_domain.url,timeout=3)
     options = Options()
     options.headless = True
     options.add_argument("--window-size=1920,1200")
 
     driver = webdriver.Chrome(options=options, executable_path="chromedriver.exe")
     driver.get(sus_domain.url)
-  
-    if (driver.current_url != res.url) & (driver.current_url + "/" != res.url) & (driver.current_url != res.url + "/") & (hostname not in driver.current_url):
-        sus_domain.redirected = 1
+    if (driver.current_url != sus_domain.url) & (driver.current_url + "/" != sus_domain.url) & (driver.current_url != sus_domain.url + "/"):
+        sus_domain.redirection = 1
         sus_domain.redirected_url = driver.current_url
         log(sus_domain.url + " REDIRECTS" + " to" + " " + driver.current_url)
     else:
-        log(sus_domain.url + " DOES NOT! REDIRECTS")
+        too_many_requests(sus_domain)
+        log(sus_domain.url + " DOES NOT! REDIRECT")
     driver.quit()
 
 
@@ -106,7 +108,7 @@ def check_rank(sus_domain):
         url = data_tojson["ALEXA"]["SD"][1]["POPULARITY"]["URL"]
         rank= data_tojson["ALEXA"]["SD"][1]["POPULARITY"]["TEXT"]
  
-        if rank > 10000:
+        if rank > 100000:
             log(sus_domain.url + " Rank is above 10k")
             sus_domain.rank=1
         else:
@@ -118,15 +120,35 @@ def check_rank(sus_domain):
 
 
 
-def check_iframe(sus_domain):
+def check_malicious_content(sus_domain):
+    malicious_flag = False
+    print(sus_domain.redirection)
+    print(sus_domain.redirected_url)
     if sus_domain.redirection == 1:
         url = sus_domain.redirected_url
+        if "mailto:" in url:
+            sus_domain.mail=1
+            malicious_flag = True
     else:
         url = sus_domain.url
     res = requests.get(url)
     data = res.text
     soup = BeautifulSoup(data, 'html.parser')
-    print(soup.find('iframe'))
+    iframes = soup.findAll('iframe')
+    print(url)
+    print(res.text)
+    for iframe in iframes:
+        if 'frameBorder=\"0\"' in iframes:
+            sus_domain.iframe = 1
+            malicious_flag = True
+
+    if malicious_flag == True:
+        log(sus_domain.url + " Has malicious content")
+    else:
+        log(sus_domain.url + " Has safe content")
+
+
+
 
 
 def ssl_duration_check(sus_domain):
@@ -170,6 +192,14 @@ def check_dash(sus_domain):
         log("\'-\' not present in hostname")
 
 
+def too_many_requests(sus_domain):
+    page = requests.get(sus_domain.url)
+    if page.text == "Too many requests":
+        sus_domain.too_many_requests = 1
+        log("There is \'Too many requests\' for: " + sus_domain.url)    
+    else:
+        log("There is not \'Too many requests for\': " + sus_domain.url)
+
 
 def log(string):
     print(str(datetime.datetime.now()) + " " + string)
@@ -190,10 +220,13 @@ def run_on_suffix(domain_name, suffix):
 
 
 #run_on_suffix("paypal","com")
-dom = domain(0,"google.com","http://peypal.com/")
+dom = domain(0,"google.com","http://paypalk.com/")
 check_redirecetion(dom)
-check_iframe(dom)
-
+check_malicious_content(dom)
+#res = requests.get("http://ww1.paypalk.com/")
+#print(res.text)
+#r = requests.get("http://ww1.peypal.com/")
+#print(r.text)
 
 
 
