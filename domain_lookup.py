@@ -13,6 +13,21 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import xmltodict
 import time
+import importlib
+from dom_compare import similiar
+import random
+
+#will be added to requests
+user_agent_list = [
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1.1 Safari/605.1.15',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:77.0) Gecko/20100101 Firefox/77.0',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
+]
+user_agent = random.choice(user_agent_list)
+headers = {'User-Agent': user_agent}
+#will be added to requests
 
 existing_domains = []
 original_url = str(sys.argv[1])
@@ -35,6 +50,16 @@ class domain:
 
 
  
+
+def compare_doms(sus_domain):
+    if sus_domain.redirection == 1:
+        sus_url = sus_domain.redirected_url
+    else:
+        sus_url = sus_domain.url
+    
+    sus_resp = requests.get(sus_url)
+    resp = requests.get(original_url)
+    return similiar(sus_resp.text,resp.text,0.15) * 100
 
 def check_ssl_and_exist(domain_name, suffix):
     log("Checking if " + "https://" + domain_name + "." + suffix + " exists")
@@ -133,8 +158,6 @@ def check_malicious_content(sus_domain):
     data = res.text
     soup = BeautifulSoup(data, 'html.parser')
     iframes = soup.findAll('iframe')
-  #  print(url)
-  #  print(res.text)
     for iframe in iframes:
         if 'frameBorder=\"0\"' in iframes:
             sus_domain.iframe = 1
@@ -218,24 +241,9 @@ def run_on_suffix(domain_name, suffix):
 
 
 #run_on_suffix("paypal","com")
-dom = domain(0,"google.com","http://peypal.com/")
+dom = domain(0,"google.com","https://google.com/")
 check_redirecetion(dom)
-check_malicious_content(dom)
-#res = requests.get("http://ww1.paypalk.com/")
-#print(res.text)
-#r = requests.get("http://ww1.peypal.com/")
-#print(r.text)
+#check_malicious_content(dom)
 
-
-
-# send a HTTP request to the URL of the webpage I want to access
-#r = requests.get(url)
-#print(r.history)
-#data = r.text
-
-
-#soup = BeautifulSoup(data, 'html.parser')
-#print(r.url)
-#print(soup.find('iframe'))
-
+print(compare_doms(dom))
 
