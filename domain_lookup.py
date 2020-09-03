@@ -2,7 +2,6 @@ import requests
 import socket   
 import sys
 from urllib.request import Request, urlopen, ssl, socket
-from urllib.error import URLError, HTTPError
 import json
 import ssl 
 import datetime
@@ -13,7 +12,6 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import xmltodict
 import time
-import importlib
 from dom_compare import similiar
 import random
 
@@ -47,7 +45,7 @@ class domain:
         self.iframe=0
         self.mail=0
         self.too_many_requests=0
-
+        self.url_length=0
 
  
 
@@ -77,7 +75,7 @@ def check_ssl_and_exist(domain_name, suffix):
             hostname = domain_name + "." + suffix
             url = "http://" + hostname
             res = requests.get(url,timeout=3)
-            existing_domains.append(domain(1,hostname,url))
+            existing_domains.append(domain(0,hostname,url))
             log("SUCCESS " + url + " exists")
             return 0
         except:
@@ -86,21 +84,15 @@ def check_ssl_and_exist(domain_name, suffix):
 
 
 
-def check_redirecetion(sus_domain):
-    options = Options()
-    options.headless = True
-    options.add_argument("--window-size=1920,1200")
-
-    driver = webdriver.Chrome(options=options, executable_path="chromedriver.exe")
+def check_redirecetion(sus_domain,driver):
     driver.get(sus_domain.url)
     if (driver.current_url != sus_domain.url) & (driver.current_url + "/" != sus_domain.url) & (driver.current_url != sus_domain.url + "/"):
         sus_domain.redirection = 1
         sus_domain.redirected_url = driver.current_url
         log(sus_domain.url + " REDIRECTS" + " to" + " " + driver.current_url)
     else:
-        too_many_requests(sus_domain)
+        too_many_requests(sus_domain,sus_domain.url)
         log(sus_domain.url + " DOES NOT! REDIRECT")
-    driver.quit()
 
 
 
@@ -110,7 +102,7 @@ def permutation(domain_name):
     for i in range(len(domain_name)):
         string = domain_name[0:i] + domain_name[i] + domain_name[i:]
         log(string + " added to the list")
-        res.append(string)    
+        res.append(string)      
     res.append("peypal")
     log("peypal added to the list")    
     res.append("paypalk")
@@ -154,6 +146,8 @@ def check_malicious_content(sus_domain):
             malicious_flag = True
     else:
         url = sus_domain.url
+
+    too_many_requests(sus_domain,url)
     res = requests.get(url)
     data = res.text
     soup = BeautifulSoup(data, 'html.parser')
@@ -168,12 +162,18 @@ def check_malicious_content(sus_domain):
     else:
         log(sus_domain.url + " Has safe content")
 
-
+def check_url_length(sus_domain):
+    if sus_domain.redirection == 1:
+        if len(sus_domain.redirected_url) > 25:
+            sus_domain.url_length = 1
+            log(sus_domain.redirected_url + " Has a long url")
+            return 0
+    log(sus_domain.redirected_url + " Has normal size url") 
 
 
 
 def ssl_duration_check(sus_domain):
-    if sus_domain.ssl == 1:     
+    if sus_domain.ssl == 1: 
         ssl_date_fmt = r'%b %d %H:%M:%S %Y %Z'
         context = ssl.create_default_context()
         conn = context.wrap_socket(
@@ -213,8 +213,8 @@ def check_dash(sus_domain):
         log("\'-\' not present in hostname")
 
 
-def too_many_requests(sus_domain):
-    page = requests.get(sus_domain.url)
+def too_many_requests(sus_domain,url):
+    page = requests.get(url)
     if page.text == "Too many requests":
         sus_domain.too_many_requests = 1
         log("There is \'Too many requests\' for: " + sus_domain.url)    
@@ -231,19 +231,26 @@ def run_on_suffix(domain_name, suffix):
     for p in perm:
         check_ssl_and_exist(p, suffix)
     
+    options = Options()
+    options.headless = True
+    options.add_argument("--window-size=1920,1200")
+
+    driver = webdriver.Chrome(options=options, executable_path="chromedriver.exe")
     for sus in existing_domains:
-        check_redirecetion(sus)   
-       # ssl_duration_check(sus)
-       # check_rank(sus)
-       # check_https_token(sus)
-       # check_dash(sus)
+        check_redirecetion(sus,driver)
+        print("")   
+    driver.quit()
+    
+    for sus in existing_domains:
+        ssl_duration_check(sus)
+        check_malicious_content(sus)
+        check_rank(sus)
+        check_https_token(sus)
+        check_dash(sus)
+        check_url_length(sus)
         print("")
 
+run_on_suffix("paypal","com")
 
-#run_on_suffix("paypal","com")
-dom = domain(0,"google.com","https://google.com/")
-check_redirecetion(dom)
-#check_malicious_content(dom)
 
-print(compare_doms(dom))
 
