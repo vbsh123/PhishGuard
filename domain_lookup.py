@@ -28,8 +28,8 @@ headers = {'User-Agent': user_agent}
 #will be added to requests
 
 existing_domains = []
-original_url = str(sys.argv[1])
-hostname = str(sys.argv[2]) 
+original_url = "hi"
+hostname = "bye" 
 
 class domain:
     def __init__(self, ssl, hostname, url):
@@ -250,7 +250,15 @@ def run_on_suffix(domain_name, suffix):
         check_url_length(sus)
         print("")
 
-run_on_suffix("paypal","com")
 
 
 
+
+def run(domain_name):
+    try:
+        suffix_list = ["com","net","org","ga","tk","ml","cf","gq"]
+        for suffix in suffix_list:
+            run_on_suffix(domain_name, suffix)
+            return 0
+    except:
+        return 1
