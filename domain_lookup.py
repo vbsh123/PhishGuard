@@ -252,8 +252,6 @@ def run_on_suffix(domain_name, suffix):
 
 
 
-
-
 def run(domain_name):
     try:
         suffix_list = ["com","net","org","ga","tk","ml","cf","gq"]
