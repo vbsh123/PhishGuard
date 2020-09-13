@@ -2,10 +2,9 @@ from flask import Flask
 from flask import request
 from flask import jsonify
 import uuid
-from domain_lookup import run_on_suffix
+from domain_lookup import scan
 import psycopg2
 from flask_cors import CORS, cross_origin
-
 app = Flask(__name__)
 
 cors = CORS(app)
@@ -27,10 +26,11 @@ def login():
 
     #connect to the db 
     con = psycopg2.connect(
-        host = "localhost",
-        database="postgres",
-        user = "postgres",
-        password = "tutatutayari")
+    host = "ec2-54-211-169-227.compute-1.amazonaws.com",
+    database="db9re09i5sa815",
+    user = "ovnalxutzipgpq",
+    password = "05477ca8a578982333f07a681c05a64c68fb62514965d60cf8d69fe628dbc927")
+
     cur = con.cursor()
 
     email_and_psw = (user_email,user_psw,)
@@ -58,10 +58,11 @@ def register():
 
     #connect to the db
     con = psycopg2.connect(
-    host = "localhost",
-    database="postgres",
-    user = "postgres",
-    password = "tutatutayari")
+    host = "ec2-54-211-169-227.compute-1.amazonaws.com",
+    database="db9re09i5sa815",
+    user = "ovnalxutzipgpq",
+    password = "05477ca8a578982333f07a681c05a64c68fb62514965d60cf8d69fe628dbc927")
+
 
     cur = con.cursor()
     
@@ -86,10 +87,10 @@ def register():
 def get_info():
     token = request.headers.get("token")
     con = psycopg2.connect(
-    host = "localhost",
-    database="postgres",
-    user = "postgres",
-    password = "tutatutayari")
+    host = "ec2-54-211-169-227.compute-1.amazonaws.com",
+    database="db9re09i5sa815",
+    user = "ovnalxutzipgpq",
+    password = "05477ca8a578982333f07a681c05a64c68fb62514965d60cf8d69fe628dbc927")
 
     cur = con.cursor()
     token = (token,)
@@ -97,8 +98,8 @@ def get_info():
     rows = cur.fetchall()
     if not rows:
         return "ERROR"
-
-    response = jsonify({"email":rows[0][0], "password":rows[0][1],"full_name":rows[0][4]})
+    print(rows)
+    response = jsonify({"email":rows[0][0], "password":rows[0][1],"full_name":rows[0][3]})
     return response
 
 
@@ -107,10 +108,10 @@ def get_info():
 def fetch_domain():
     token = request.headers.get("token")
     con = psycopg2.connect(
-    host = "localhost",
-    database="postgres",
-    user = "postgres",
-    password = "tutatutayari")
+    host = "ec2-54-211-169-227.compute-1.amazonaws.com",
+    database="db9re09i5sa815",
+    user = "ovnalxutzipgpq",
+    password = "05477ca8a578982333f07a681c05a64c68fb62514965d60cf8d69fe628dbc927")
 
     cur = con.cursor()
     token = (token,)
@@ -124,12 +125,24 @@ def fetch_domain():
 
 @app.route('/scan', methods = ['POST'])
 @cross_origin()
-def scan():
+def scan_send():
     data = request.get_json()
+    print(data)
     user_token = data["token"]
     user_domain = data["domain_name"]
-    
-   
+    con = psycopg2.connect(
+    host = "ec2-54-211-169-227.compute-1.amazonaws.com",
+    database="db9re09i5sa815",
+    user = "ovnalxutzipgpq",
+    password = "05477ca8a578982333f07a681c05a64c68fb62514965d60cf8d69fe628dbc927")
+
+    cur = con.cursor()
+    token = (user_token,)
+    cur.execute("SELECT * FROM domains WHERE token=%s", token)
+    rows = cur.fetchall()
+
+    print(rows)
+    scan(user_domain,"yoelvb5801@gmail.com")
 
     response = jsonify({"status":"SUCCESS"})
     return response
@@ -142,10 +155,10 @@ def add_domain():
     user_domain = data["domain_name"]
 
     con = psycopg2.connect(
-    host = "localhost",
-    database="postgres",
-    user = "postgres",
-    password = "tutatutayari")
+    host = "ec2-54-211-169-227.compute-1.amazonaws.com",
+    database="db9re09i5sa815",
+    user = "ovnalxutzipgpq",
+    password = "05477ca8a578982333f07a681c05a64c68fb62514965d60cf8d69fe628dbc927")
 
     cur = con.cursor()
 
@@ -172,10 +185,10 @@ def delete_domain():
 
 
     con = psycopg2.connect(
-    host = "localhost",
-    database="postgres",
-    user = "postgres",
-    password = "tutatutayari")
+    host = "ec2-54-211-169-227.compute-1.amazonaws.com",
+    database="db9re09i5sa815",
+    user = "ovnalxutzipgpq",
+    password = "05477ca8a578982333f07a681c05a64c68fb62514965d60cf8d69fe628dbc927")
 
     cur = con.cursor()
 
