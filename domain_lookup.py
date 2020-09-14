@@ -21,7 +21,7 @@ from sklearn import tree
 from sklearn.metrics import accuracy_score
 import numpy as np
 from detection import decision_tree
-from send_mail import send_email
+from send_mail import send
 from lxml.html import fromstring
 from itertools import cycle
 import traceback
@@ -42,7 +42,7 @@ headers = {'User-Agent': user_agent}
 existing_domains = []
 found_domains = []
 data_set_urls = []
-original_url = "hi"
+#original_url = "hi"
 hostname = "bye" 
 
 class domain:
@@ -95,7 +95,7 @@ proxy= next(proxy_pool)
 
 
 def send_to_email(email, contents):
-    send_email(email,contents)
+    send(email)
 
 def get_dots(sus_domain):
     if sus_domain.redirection == 1:
@@ -125,7 +125,7 @@ def get_favicon(sus_domain):
         sus_domain.icons = 1
 
 
-def compare_doms(sus_domain):
+def compare_doms(sus_domain,original_url):
     if sus_domain.redirection == 1:
         sus_url = sus_domain.redirected_url
     else:
@@ -197,6 +197,7 @@ def miniPermutation(domain_name,suffix):
     abc = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
     for letter in abc:
         res.append(domain_name + letter)
+   
     return res    
 
 def check_rank(sus_domain):   
@@ -334,7 +335,6 @@ def check_report(sus_domain,proxy_tmp):
         hostname = sus_domain.hostname
     else:
         hostname = sus_domain.redirected_hostname
-    print("https://www.urlvoid.com/scan/" + hostname)
     try:
         res = requests.get("https://www.urlvoid.com/scan/" + hostname + "/" , proxies=proxy_tmp, timeout=5 )
     except:
@@ -352,13 +352,51 @@ def check_report(sus_domain,proxy_tmp):
         if danger > 0:
             sus_domain.rank = 1
     except:
-        print("problem i snot in proxy")
+        print("problem is not in proxy")
 
 def form_message(sus_domain):
-    message = {"DETECTED: " + sus_domain.url}
+    message = "DETECTED: " + sus_domain.url + '\n'
+    if sus_domain.redirection == 1:
+        message += "This domain redirects -" + '\n'
+    else:
+        message += "This domain doesnt redirect +" + '\n'
+
+    if (sus_domain.ssl == 1) | (sus_domain.ssl_duration == 1):
+        message += "This domain has a suspicious or nonexistent SSL Certficate" + '\n'
+    else:
+        message += "This domain has SSL protection" + '\n'
+    
+    if (sus_domain.iframe == 1) | (sus_domain.mail == 1) | (sus_domain.https_token == 1):
+        message += "This domain uses suspicious content" + '\n'
+    else:
+        message += "This domain has safe content" + '\n'
+    
+    if sus_domain.rank == 1:
+        message += "This domain has nonexistent or very low rank" + '\n'
+    else:
+        message += "This domain has a normal rank" + '\n'
+
+    if (sus_domain.url_length == 1) | (sus_domain.dash_token == 1) | (sus_domain.dots == 1):
+        message += "This domain has abnormal URL" + '\n'
+    else:
+        message += "This domain has normal URL" + '\n'
+
+    if sus_domain.rank == 1:
+        message += "This domain has been reported as malicious" + '\n'
+    else:
+        message += "No malicious reports have been found on this domain" + '\n'
+
+    if sus_domain.dangerous == 1:
+        message += "THIS SITE CLASSIFIES AS THIEFT" + '\n'
+    else:
+        message += "THIS SITE CLASSIFIES AS ADS" + '\n'
+
+    message += '\n'
+
+
     return message
 
-def run_on_suffix(domain_name, suffix):
+def run_on_suffix(domain_name, suffix,orig,level):
     proxy = check_working_proxy()
     inputs = np.array([1,1,1,1,1,1,1,1])
     perm  = permutation(domain_name,suffix,4)
@@ -436,23 +474,24 @@ def run_on_suffix(domain_name, suffix):
             url = found.redirected_url
         else:
             url = found.url
-        found.dangerous = compare_doms(found)
+        found.dangerous = compare_doms(found,orig)
         message += form_message(found)
 
+    with open('email_to_send.txt', 'w') as fp:
+        fp.write(message)
 
 
     print(message)
     return message
     
 
-    
 
+def scan(url,email,level):
 
-def scan(url,email):
     original_url=url
     print(original_url)
-    ext = tldextract.extract(url)
-    message = run_on_suffix(ext.domain,ext.suffix)
+    ext = tldextract.extract(original_url)
+    message = run_on_suffix(ext.domain,ext.suffix,original_url,level)
     send_to_email(email,message)
 
 def run(domain_name):

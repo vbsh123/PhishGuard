@@ -1,0 +1,126 @@
+DETECTED: http://paypala.com
+This domain doesnt redirect +
+This domain has a suspicious or nonexistent SSL Certficate
+This domain has safe content
+This domain has a normal rank
+This domain has normal URL
+No malicious reports have been found on this domain
+THIS SITE CLASSIFIES AS ADS
+
+DETECTED: http://paypalc.com
+This domain redirects -
+This domain has a suspicious or nonexistent SSL Certficate
+This domain has safe content
+This domain has a normal rank
+This domain has normal URL
+No malicious reports have been found on this domain
+THIS SITE CLASSIFIES AS ADS
+
+DETECTED: http://paypald.com
+This domain redirects -
+This domain has a suspicious or nonexistent SSL Certficate
+This domain has safe content
+This domain has a normal rank
+This domain has abnormal URL
+No malicious reports have been found on this domain
+THIS SITE CLASSIFIES AS ADS
+
+DETECTED: http://paypale.com
+This domain doesnt redirect +
+This domain has a suspicious or nonexistent SSL Certficate
+This domain has safe content
+This domain has a normal rank
+This domain has normal URL
+No malicious reports have been found on this domain
+THIS SITE CLASSIFIES AS ADS
+
+DETECTED: http://paypalh.com
+This domain redirects -
+This domain has a suspicious or nonexistent SSL Certficate
+This domain has safe content
+This domain has nonexistent or very low rank
+This domain has normal URL
+This domain has been reported as malicious
+THIS SITE CLASSIFIES AS ADS
+
+DETECTED: http://paypali.com
+This domain doesnt redirect +
+This domain has a suspicious or nonexistent SSL Certficate
+This domain has safe content
+This domain has a normal rank
+This domain has normal URL
+No malicious reports have been found on this domain
+THIS SITE CLASSIFIES AS ADS
+
+DETECTED: http://paypalk.com
+This domain doesnt redirect +
+This domain has a suspicious or nonexistent SSL Certficate
+This domain has safe content
+This domain has nonexistent or very low rank
+This domain has normal URL
+This domain has been reported as malicious
+THIS SITE CLASSIFIES AS ADS
+
+DETECTED: http://paypaln.com
+This domain doesnt redirect +
+This domain has a suspicious or nonexistent SSL Certficate
+This domain has safe content
+This domain has nonexistent or very low rank
+This domain has normal URL
+This domain has been reported as malicious
+THIS SITE CLASSIFIES AS ADS
+
+DETECTED: http://paypalo.com
+This domain doesnt redirect +
+This domain has a suspicious or nonexistent SSL Certficate
+This domain has safe content
+This domain has nonexistent or very low rank
+This domain has normal URL
+This domain has been reported as malicious
+THIS SITE CLASSIFIES AS ADS
+
+DETECTED: http://paypalp.com
+This domain doesnt redirect +
+This domain has a suspicious or nonexistent SSL Certficate
+This domain has safe content
+This domain has nonexistent or very low rank
+This domain has normal URL
+This domain has been reported as malicious
+THIS SITE CLASSIFIES AS ADS
+
+DETECTED: http://paypalq.com
+This domain doesnt redirect +
+This domain has a suspicious or nonexistent SSL Certficate
+This domain has safe content
+This domain has nonexistent or very low rank
+This domain has normal URL
+This domain has been reported as malicious
+THIS SITE CLASSIFIES AS ADS
+
+DETECTED: http://paypalt.com
+This domain doesnt redirect +
+This domain has a suspicious or nonexistent SSL Certficate
+This domain has safe content
+This domain has a normal rank
+This domain has normal URL
+No malicious reports have been found on this domain
+THIS SITE CLASSIFIES AS ADS
+
+DETECTED: http://paypalu.com
+This domain redirects -
+This domain has a suspicious or nonexistent SSL Certficate
+This domain has safe content
+This domain has a normal rank
+This domain has abnormal URL
+No malicious reports have been found on this domain
+THIS SITE CLASSIFIES AS ADS
+
+DETECTED: http://paypalz.com
+This domain doesnt redirect +
+This domain has a suspicious or nonexistent SSL Certficate
+This domain has safe content
+This domain has nonexistent or very low rank
+This domain has normal URL
+This domain has been reported as malicious
+THIS SITE CLASSIFIES AS ADS
+

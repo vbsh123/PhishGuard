@@ -127,9 +127,13 @@ def fetch_domain():
 @cross_origin()
 def scan_send():
     data = request.get_json()
-    print(data)
     user_token = data["token"]
     user_domain = data["domain_name"]
+
+    print(user_domain)
+    splitted = user_domain['label'].split(" ")
+    domain = splitted[0]
+    level = splitted[1]
     con = psycopg2.connect(
     host = "ec2-54-211-169-227.compute-1.amazonaws.com",
     database="db9re09i5sa815",
@@ -141,8 +145,7 @@ def scan_send():
     cur.execute("SELECT * FROM domains WHERE token=%s", token)
     rows = cur.fetchall()
 
-    print(rows)
-    scan(user_domain,"yoelvb5801@gmail.com")
+    scan(domain,"yoelvb5801@gmail.com",level)
 
     response = jsonify({"status":"SUCCESS"})
     return response

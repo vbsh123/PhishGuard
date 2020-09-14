@@ -1,7 +1,37 @@
-import yagmail
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import encoders
 
-def send_email(email_to_send, contents_to_send):
-    yag = yagmail.SMTP('phishguard2020@gmail.com', 'zxbhfkcvmnd123')
-    yag.send(email_to_send, 'Scan Results', contents=contents_to_send)
-    
-#send_email("yoelvb5801@gmail.com","hi")
+def send(email):
+    email_user = 'phishguard2020@gmail.com'
+    email_password = 'zxbhfkcvmnd123'
+    email_send = email
+    subject = 'Scan Detection Results'
+
+    msg = MIMEMultipart()
+    msg['From'] = email_user
+    msg['To'] = email_send
+    msg['Subject'] = subject
+
+    body = 'Scan Detection Results are in the attachment'
+    msg.attach(MIMEText(body,'plain'))
+
+    filename='email_to_send.txt'
+    attachment  =open(filename,'rb')
+
+    part = MIMEBase('application','octet-stream')
+    part.set_payload((attachment).read())
+    encoders.encode_base64(part)
+    part.add_header('Content-Disposition',"attachment; filename= "+filename)
+
+    msg.attach(part)
+    text = msg.as_string()
+    server = smtplib.SMTP('smtp.gmail.com',587)
+    server.starttls()
+    server.login(email_user,email_password)
+
+
+    server.sendmail(email_user,email_send,text)
+    server.quit()
